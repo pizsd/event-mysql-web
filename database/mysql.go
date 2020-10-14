@@ -11,7 +11,7 @@ var Conn *gorm.DB
 
 func init() {
 	var err error
-	cfg, err := ini.Load("./conf/database.ini")
+	cfg, err := ini.Load("./config/app.ini")
 	if err != nil {
 		fmt.Printf("Fail to read file: %v", err)
 	}
