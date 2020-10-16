@@ -9,7 +9,7 @@ import (
 func Route() *gin.Engine {
 	r := gin.Default()
 	admin := r.Group("/admin")
-	admin.Use(AdminAuthRequired())
+	//admin.Use()
 	{
 		admin.POST("/login")
 		admin.GET("/home")

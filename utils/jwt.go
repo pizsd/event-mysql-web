@@ -3,12 +3,14 @@ package units
 import (
 	"errors"
 	"fmt"
+	"gin-web/models"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-ini/ini"
 	"time"
 )
 
 type MyClaims struct {
+	Id       uint   `josn:"id"`
 	Username string `json:"username"`
 	Paltform string `json:"paltform"`
 	jwt.StandardClaims
@@ -27,10 +29,17 @@ func init() {
 	JwtSecret = cfg.Section("app").Key("JWT_SECRET").String()
 }
 
-func GenerateToken() (string, error) {
+func GenerateToken(username, password, platform string) (string, error) {
+
+	user := models.GetUserByName(username)
+	// 加密password字符串
+	if password != user.Password {
+		return "", errors.New("Incorrect username or password")
+	}
 	c := MyClaims{
-		"username",
-		"paltform",
+		user.ID,
+		user.Name,
+		platform,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(ExpireAt).Unix(),
 			Issuer:    "event-mysql-web",
@@ -48,7 +57,11 @@ func ParseToken(tokenString string) (*MyClaims, error) {
 		return nil, err
 	}
 	if claims, ok := token.Claims.(*MyClaims); ok && token.Valid {
-		return claims, nil
+		if claims.VerifyExpiresAt(time.Now().Unix(), true) {
+			return claims, nil
+		} else {
+			return nil, errors.New("Token expired")
+		}
 	}
-	return nil, errors.New("Invalid Token")
+	return nil, errors.New("Invalid token")
 }

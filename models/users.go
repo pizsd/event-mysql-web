@@ -22,3 +22,9 @@ func (u *User) Create() (uint, error) {
 	res := DB.Conn.Create(&u)
 	return uint(u.ID), res.Error
 }
+
+func GetUserByName(username string) User {
+	user := User{}
+	DB.Conn.Where("name = ?", username).First(&user)
+	return user
+}
