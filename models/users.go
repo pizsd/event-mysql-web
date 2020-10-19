@@ -23,8 +23,12 @@ func (u *User) Create() (uint, error) {
 	return uint(u.ID), res.Error
 }
 
-func GetUserByName(username string) User {
+func (User) GetUserByName(username string) User {
 	user := User{}
 	DB.Conn.Where("name = ?", username).First(&user)
 	return user
+}
+
+func (U *User) LoginVerify(user, password string) {
+
 }

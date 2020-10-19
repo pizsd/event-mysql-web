@@ -16,7 +16,7 @@ type MyClaims struct {
 	jwt.StandardClaims
 }
 
-const ExpireAt = time.Hour * 2
+const ExpireAt = time.Hour * 8
 
 var JwtSecret string
 
@@ -34,7 +34,7 @@ func GenerateToken(username, password, platform string) (string, error) {
 	user := models.GetUserByName(username)
 	// 加密password字符串
 	if password != user.Password {
-		return "", errors.New("Incorrect username or password")
+		return "", errors.New("incorrect username or password")
 	}
 	c := MyClaims{
 		user.ID,
@@ -60,8 +60,8 @@ func ParseToken(tokenString string) (*MyClaims, error) {
 		if claims.VerifyExpiresAt(time.Now().Unix(), true) {
 			return claims, nil
 		} else {
-			return nil, errors.New("Token expired")
+			return nil, errors.New("token expired")
 		}
 	}
-	return nil, errors.New("Invalid token")
+	return nil, errors.New("invalid token")
 }

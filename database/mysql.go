@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var Conn *gorm.DB
+var db *gorm.DB
 
 func init() {
 	var err error
@@ -21,10 +21,14 @@ func init() {
 	user := cfg.Section("mysql").Key("DB_USER").String()
 	password := cfg.Section("mysql").Key("DB_PASSWORD").String()
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, password, host, port, database)
-	Conn, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {
 		fmt.Printf("DB:%s", err)
 	}
+}
+
+func CloseDB() {
+	defer db.Close()
 }

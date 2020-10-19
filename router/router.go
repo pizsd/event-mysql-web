@@ -8,16 +8,15 @@ import (
 
 func Route() *gin.Engine {
 	r := gin.Default()
+	r.POST("/admin/login")
 	admin := r.Group("/admin")
 	//admin.Use()
 	{
-		admin.POST("/login")
 		admin.GET("/home")
 	}
-
+	r.POST("/api/login")
 	api := r.Group("/api")
 	{
-		api.POST("/login")
 		api.GET("/user")
 		api.POST("/user", controller.User)
 		api.GET("/home")
